@@ -8,7 +8,7 @@ const ESERVICE_CONFIG = {
 
   /* ① ข้อมูลหน่วยงาน */
   orgName:    'เทศบาลตำบลบ้านใหม่',
-  orgShort:   'ทต.บ้านใหม่',
+  orgShort:   'เดโม',
   orgAddress: 'เลขที่ 999 หมู่ที่ 6 ต.วังเหนือ อ.วังเหนือ จ.ลำปาง 52140',
   orgPhone:   '0-5427-9006',
   orgLogo:    'https://www.banmailocal.go.th/images/LogoBM2565.gif',
