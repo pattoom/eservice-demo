@@ -150,5 +150,6 @@ apiUrl: {
 
 ## 📞 ติดต่อผู้พัฒนา
 
-pattoom — Web Design & Maintenance, Pa Sang, Lamphun  
-Line / โทร: ติดต่อผ่านช่องทางที่ได้รับแจ้ง
+นายปฏิวัติ ตุ้มทรัพย์ — กาดนัดเมืองเถินดอทคอม, เถิน, ลำปาง
+Tel: 086-190-2513, 085-708-1347
+Email: thoenmarketdotcomwebsite@gmail.com | www.thoenmarket.com

@@ -7,12 +7,12 @@
 const ESERVICE_CONFIG = {
 
   /* ① ข้อมูลหน่วยงาน */
-  orgName:    'เทศบาลตำบลบ้านใหม่',
+  orgName:    'กาดนัดเมืองเถินดอทคอม',
   orgShort:   'เดโม',
-  orgAddress: 'เลขที่ 999 หมู่ที่ 6 ต.วังเหนือ อ.วังเหนือ จ.ลำปาง 52140',
+  orgAddress: 'เลขที่ 115 หมู่ที่ 3 ต.ล้อมแรด อ.เถิน จ.ลำปาง 52160',
   orgPhone:   '0-5427-9006',
-  orgLogo:    'https://www.banmailocal.go.th/images/LogoBM2565.gif',
-  orgWebsite: 'https://www.banmailocal.go.th/',
+  orgLogo:    'https://www.thoenmarket.com/images/Logo18112561-0001.gif',
+  orgWebsite: 'https://www.thoenmarket.com/index.php',
 
   /* ② Apps Script Deployment URLs (ใส่ URL ที่ได้จาก "New deployment") */
   apiUrl: {
