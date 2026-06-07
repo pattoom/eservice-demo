@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>E-Service รับเรื่องร้องเรียนทั่วไป • ทต.บ้านใหม่</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --b1:#1e3a8a; --b2:#2563eb; --b3:#93c5fd;
+      --white:#fff; --text:#1e2d3d; --muted:#64748b;
+      --border:#d1d5db; --green:#16a34a; --red:#dc2626; --yellow:#d97706;
+    }
+    html, body { min-height:100vh; font-family:'Sarabun',sans-serif; color:var(--text); }
+    body {
+      background:linear-gradient(to bottom,rgba(30,58,138,.42) 0%,rgba(37,99,235,.32) 50%,rgba(30,58,138,.42) 100%),
+        url('/images/banmaibg.jpg') center/cover fixed no-repeat;
+      background-color:var(--b1); padding-bottom:72px;
+    }
+    header { background:linear-gradient(135deg,var(--b1) 0%,var(--b2) 55%,var(--b3) 100%); box-shadow:0 3px 16px rgba(0,0,0,.35); padding:14px 20px; position:sticky; top:0; z-index:200; }
+    .header-inner { max-width:700px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+    header img { width:62px; height:62px; border-radius:50%; border:3px solid #fff; object-fit:cover; flex-shrink:0; }
+    .header-text h1 { color:#fff; font-size:1.05rem; font-weight:700; line-height:1.4; }
+    .header-text p  { color:rgba(255,255,255,.85); font-size:.75rem; margin-top:2px; }
+    .container { max-width:700px; margin:24px auto 0; padding:0 16px; }
+
+    /* Stats */
+    .stats-box { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .stat-card { flex:1; min-width:140px; background:rgba(255,255,255,.88); backdrop-filter:blur(8px); border:1px solid rgba(37,99,235,.2); border-radius:12px; padding:14px; text-align:center; box-shadow:0 4px 14px rgba(0,0,0,.1); }
+    .stat-card .icon { font-size:26px; margin-bottom:4px; }
+    .stat-card .num  { font-size:24px; font-weight:700; color:var(--b1); }
+    .stat-card .lbl  { font-size:.78rem; color:var(--muted); margin-top:2px; }
+
+    .info-card { background:rgba(255,255,255,.95); border-radius:16px 16px 0 0; padding:16px 22px 12px; border-bottom:1px solid #e5e7eb; text-align:center; }
+    .info-card h2 { font-size:1rem; font-weight:700; color:var(--b1); margin-bottom:4px; }
+    .info-card p  { font-size:.78rem; color:var(--muted); line-height:1.7; }
+    .form-card { background:rgba(255,255,255,.97); border-radius:0 0 16px 16px; padding:20px 22px 24px; box-shadow:0 8px 32px rgba(0,0,0,.22); }
+
+    .form-group { margin-bottom:14px; }
+    .form-row { display:flex; gap:12px; }
+    .form-row .form-group { flex:1; }
+    label { display:block; font-size:.875rem; font-weight:600; color:#1e40af; margin-bottom:5px; }
+    label .req { color:var(--red); margin-left:2px; }
+    label .opt { color:var(--muted); font-weight:400; font-size:.78rem; margin-left:4px; }
+    input[type="text"],input[type="date"],input[type="tel"],input[type="email"],select,textarea {
+      width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px;
+      font-family:'Sarabun',sans-serif; font-size:.93rem; color:var(--text);
+      background:#fafcff; transition:border-color .2s; outline:none;
+    }
+    input:focus,select:focus,textarea:focus { border-color:var(--b2); box-shadow:0 0 0 3px rgba(37,99,235,.15); background:#fff; }
+    textarea { resize:vertical; min-height:100px; }
+
+    .file-drop { border:2px dashed var(--border); border-radius:8px; padding:16px; text-align:center; cursor:pointer; background:#fafcff; }
+    .file-drop:hover { border-color:var(--b2); background:#eff6ff; }
+    .file-drop .icon { font-size:1.8rem; margin-bottom:4px; }
+    .file-drop .label-text { font-size:.85rem; color:var(--muted); }
+    .file-drop .label-text strong { color:var(--b1); }
+    .file-drop .file-limit { font-size:.75rem; color:#94a3b8; margin-top:3px; }
+    .file-preview { display:none; align-items:center; gap:10px; background:#eff6ff; border:1.5px solid var(--b3); border-radius:8px; padding:10px 14px; margin-top:8px; }
+    .file-preview.show { display:flex; }
+    .file-preview img { width:48px; height:48px; object-fit:cover; border-radius:6px; }
+    .file-preview .file-info { flex:1; font-size:.82rem; }
+    .file-preview .file-name { font-weight:600; word-break:break-all; }
+    .file-preview .file-size { color:var(--muted); }
+    .file-preview .btn-remove { background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer; padding:4px; }
+    .file-error { font-size:.78rem; color:var(--red); margin-top:4px; font-weight:600; }
+
+    .pdpa-box { background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px 14px; color:#1e3a8a; font-size:.82rem; line-height:1.7; margin-top:4px; }
+
+    .btn-submit { width:100%; padding:13px; background:linear-gradient(135deg,var(--b1),var(--b2)); color:#fff; border:none; border-radius:10px; font-family:'Sarabun',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; transition:opacity .2s; margin-top:6px; }
+    .btn-submit:hover { opacity:.9; }
+    .btn-submit:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-staff { display:block; width:100%; padding:12px; background:linear-gradient(135deg,#92400e,#d97706); color:#fff; border:none; border-radius:10px; font-family:'Sarabun',sans-serif; font-size:.93rem; font-weight:700; text-align:center; text-decoration:none; margin-top:10px; }
+
+    .msg { display:none; padding:12px 16px; border-radius:8px; font-size:.88rem; font-weight:600; margin-top:12px; text-align:center; }
+    .msg.success { background:#dcfce7; color:var(--green); border:1.5px solid #86efac; display:block; }
+    .msg.error   { background:#fee2e2; color:var(--red);   border:1.5px solid #fca5a5; display:block; }
+    .credit { text-align:center; font-size:.72rem; color:rgba(255,255,255,.65); padding:14px 0 4px; }
+    .fixed-footer { position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg,var(--b1),var(--b2)); padding:11px 16px; text-align:center; box-shadow:0 -2px 12px rgba(0,0,0,.3); }
+    .fixed-footer a { color:#bfdbfe; font-size:.84rem; font-weight:600; text-decoration:none; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { display:inline-block; width:15px; height:15px; border:3px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:5px; }
+    @media (max-width:480px) { .form-row { flex-direction:column; gap:0; } .stats-box { gap:8px; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <img src="/LogoBM.png" alt="โลโก้" onerror="this.style.display='none'">
+    <div class="header-text">
+      <h1>E-Service รับเรื่องร้องเรียนทั่วไป</h1>
+      <p>เทศบาลตำบลบ้านใหม่ อ.วังเหนือ จ.ลำปาง • โทร. 0-5427-9006</p>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Stats — แสดงเฉพาะตัวเลข ไม่แสดงรายชื่อ -->
+  <div class="stats-box">
+    <div class="stat-card"><div class="icon">📋</div><div class="num" id="statTotal">…</div><div class="lbl">คำร้องทั้งหมด</div></div>
+    <div class="stat-card"><div class="icon">⏳</div><div class="num" id="statPending">…</div><div class="lbl">รอดำเนินการ</div></div>
+    <div class="stat-card"><div class="icon">✅</div><div class="num" id="statDone">…</div><div class="lbl">ดำเนินการแล้ว</div></div>
+  </div>
+
+  <div class="info-card">
+    <h2>📢 แบบฟอร์มร้องเรียนทั่วไป</h2>
+    <p>เทศบาลตำบลบ้านใหม่ เลขที่ 999 หมู่ที่ 6 ต.วังเหนือ อ.วังเหนือ จ.ลำปาง 52140<br>
+    โทร. 0-5427-9006 &nbsp;|&nbsp; อีเมล: <a href="mailto:saraban@banmailocal.go.th">saraban@banmailocal.go.th</a></p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>📅 วันที่ยื่น <span class="req">*</span></label>
+        <input type="date" id="submit_datetime" required>
+      </div>
+      <div class="form-group">
+        <label>📌 ประเภทเรื่อง <span class="req">*</span></label>
+        <select id="complaint_type" required>
+          <option value="">-- เลือก --</option>
+          <option>การบริการ</option>
+          <option>สาธารณูปโภค</option>
+          <option>การจัดการพื้นที่/สถานที่</option>
+          <option>อื่นๆ</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>👤 ชื่อ–สกุล ผู้ร้องเรียน <span class="req">*</span></label>
+        <input type="text" id="applicant_name" placeholder="ชื่อ-นามสกุล" required>
+      </div>
+      <div class="form-group">
+        <label>📞 เบอร์ติดต่อ <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="0812345678" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>✉️ อีเมล <span class="opt">(รับแจ้งผลอัตโนมัติ)</span></label>
+      <input type="email" id="email" placeholder="example@gmail.com">
+    </div>
+
+    <div class="form-group">
+      <label>📝 หัวเรื่อง/หัวข้อร้องเรียน <span class="req">*</span></label>
+      <input type="text" id="subject" placeholder="เรื่องที่ต้องการร้องเรียน" required>
+    </div>
+
+    <div class="form-group">
+      <label>📄 รายละเอียดเรื่องร้องเรียน <span class="req">*</span></label>
+      <textarea id="details" placeholder="บรรยายรายละเอียดให้ชัดเจน..." required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>📷 รูปภาพประกอบ <span class="opt">(JPG/PNG/WEBP • ไม่เกิน 5 MB)</span></label>
+      <div class="file-drop" id="fileDrop" onclick="document.getElementById('attachInput').click()">
+        <input type="file" id="attachInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleFile(this)">
+        <div class="icon">📷</div>
+        <div class="label-text"><strong>คลิกเพื่อเลือกรูป</strong> หรือลากวางที่นี่</div>
+        <div class="file-limit">JPG, PNG, WEBP • ขนาดสูงสุด 5 MB</div>
+      </div>
+      <div class="file-error" id="fileError"></div>
+      <div class="file-preview" id="filePreview">
+        <img id="previewImg" src="" alt="">
+        <div class="file-info">
+          <div class="file-name" id="previewName"></div>
+          <div class="file-size" id="previewSize"></div>
+        </div>
+        <button class="btn-remove" onclick="removeFile()">✕</button>
+      </div>
+    </div>
+
+    <div class="pdpa-box">
+      🔒 <strong>ข้อมูลส่วนบุคคลของท่านจะถูกเก็บเป็นความลับ</strong><br>
+      รายการคำร้องจะเข้าถึงได้เฉพาะเจ้าหน้าที่ผู้มีรหัสผ่าน ไม่แสดงต่อสาธารณะ
+    </div>
+
+    <!-- ข้อแนะนำก่อนส่ง -->
+    <div style="background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:12px 14px;font-size:.82rem;color:#78350f;margin-top:12px;line-height:1.8">
+      📋 <strong>กรุณาตรวจสอบก่อนส่ง:</strong>
+      <ul style="margin:6px 0 0 18px">
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรให้ถูกต้อง</li>
+        <li>ระบุหัวเรื่องและรายละเอียดให้ชัดเจนและครบถ้วน</li>
+        <li>หากระบุอีเมลไว้ ท่านจะได้รับแจ้งเลขที่คำร้องและผลการดำเนินการทางอีเมล</li>
+        <li>เรื่องร้องเรียนต้องเป็นเรื่องทั่วไป ไม่ใช่เรื่องทุจริตหรือการกระทำที่ผิดกฎหมาย</li>
+      </ul>
+    </div>
+
+    <button class="btn-submit" id="btnSubmit" onclick="submitForm()">✉️ ส่งคำร้องเรียน</button>
+    <div class="msg" id="msgBox"></div>
+
+    <a href="eservice-esc-staff.html" class="btn-staff">🔐 สำหรับเจ้าหน้าที่ → ดูและจัดการคำร้อง</a>
+  </div>
+
+  <!-- ข้อกำหนดการใช้บริการ -->
+  <div style="background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border:1px solid rgba(37,99,235,.15);border-radius:14px;padding:18px 20px;margin-top:18px;color:#1e2d3d">
+    <h3 style="font-size:.95rem;font-weight:700;color:#1e3a8a;margin-bottom:10px">📌 ข้อกำหนดการใช้บริการ</h3>
+    <ol style="line-height:1.9;margin-left:18px;font-size:.82rem;color:#374151">
+      <li>เรื่องร้องเรียนจะต้องเป็นเรื่องทั่วไป ไม่ใช่เรื่องทุจริตหรือการกระทำที่ผิดกฎหมาย</li>
+      <li>ให้ระบุรายละเอียดให้ชัดเจนและครบถ้วน เพื่อความสะดวกในการติดตามสถานะ</li>
+      <li>ข้อมูลส่วนบุคคลใช้เพื่อการให้บริการตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)</li>
+      <li>🔒 รายการคำร้องของท่านจะปกปิดและเข้าถึงได้เฉพาะเจ้าหน้าที่ที่มีรหัสผ่านเท่านั้น</li>
+    </ol>
+    <div style="margin-top:12px">
+      <a href="https://www.banmailocal.go.th/" style="display:inline-block;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.88rem">🏠 กลับหน้าหลักเทศบาล</a>
+    </div>
+    <p style="margin-top:10px;font-size:.72rem;color:#94a3b8">© 2568 พัฒนาโดย เทศบาลตำบลบ้านใหม่</p>
+  </div>
+
+
+</div>
+
+<div class="fixed-footer">
+  <a href="https://www.banmailocal.go.th/">🏠 กลับหน้าหลักเว็บไซต์ ทต.บ้านใหม่</a>
+</div>
+
+<script src="../config.js"></script>
+<script>
+const API_URL  = ESERVICE_CONFIG.apiUrl.esc;
+const MAX_SIZE = 5 * 1024 * 1024;
+let attachB64 = '', attachName = '', attachMime = '';
+
+(function() {
+  const t   = new Date();
+  document.getElementById('submit_datetime').value =
+    `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+})();
+
+// โหลดสถิติ (ไม่แสดงรายชื่อ)
+fetch(`${API_URL}?action=stats`, { redirect:'follow' })
+  .then(r => r.text()).then(txt => {
+    const d = JSON.parse(txt);
+    if (d.success) {
+      document.getElementById('statTotal').textContent   = d.total;
+      document.getElementById('statPending').textContent = d.pending;
+      document.getElementById('statDone').textContent    = d.done;
+    }
+  }).catch(() => ['statTotal','statPending','statDone'].forEach(id =>
+    document.getElementById(id).textContent = '-'));
+
+const drop = document.getElementById('fileDrop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.borderColor='#2563eb'; });
+drop.addEventListener('dragleave', () => drop.style.borderColor='');
+drop.addEventListener('drop', e => { e.preventDefault(); drop.style.borderColor=''; if(e.dataTransfer.files[0]) handleFile(null,e.dataTransfer.files[0]); });
+
+function handleFile(input, file) {
+  file = file || input.files[0];
+  const errEl = document.getElementById('fileError');
+  errEl.textContent = '';
+  if (!file) return;
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) { errEl.textContent='⚠️ รองรับเฉพาะ JPG, PNG, WEBP'; return; }
+  if (file.size > MAX_SIZE) { errEl.textContent='⚠️ ไฟล์ใหญ่เกิน 5 MB'; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    attachB64=e.target.result.split(',')[1]; attachName=file.name; attachMime=file.type;
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('previewName').textContent = file.name;
+    document.getElementById('previewSize').textContent = `${(file.size/1024).toFixed(0)} KB`;
+    document.getElementById('filePreview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFile() {
+  attachB64=''; attachName=''; attachMime='';
+  document.getElementById('attachInput').value='';
+  document.getElementById('filePreview').classList.remove('show');
+}
+
+async function submitForm() {
+  const btn=document.getElementById('btnSubmit'), msgBox=document.getElementById('msgBox');
+  msgBox.className='msg'; msgBox.textContent='';
+  const vals = {
+    submit_datetime: document.getElementById('submit_datetime').value,
+    applicant_name:  document.getElementById('applicant_name').value.trim(),
+    phone:           document.getElementById('phone').value.trim(),
+    email:           document.getElementById('email').value.trim(),
+    complaint_type:  document.getElementById('complaint_type').value,
+    subject:         document.getElementById('subject').value.trim(),
+    details:         document.getElementById('details').value.trim(),
+  };
+  if (!vals.applicant_name||!vals.phone||!vals.complaint_type||!vals.subject||!vals.details) {
+    msgBox.className='msg error'; msgBox.textContent='⚠️ กรุณากรอกข้อมูลให้ครบทุกช่องที่มี *'; return;
+  }
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>กำลังส่ง...';
+  try {
+    const body=new URLSearchParams({action:'submitESC',...vals});
+    if(attachB64){body.append('attachBase64',attachB64);body.append('attachFilename',attachName);body.append('attachMime',attachMime);}
+    const data=JSON.parse(await (await fetch(API_URL,{method:'POST',body})).text());
+    if(data.success){
+      msgBox.className='msg success';
+      msgBox.textContent=vals.email
+        ? `✅ ส่งคำร้องสำเร็จ (${data.docNo}) ระบบจะแจ้งผลไปที่ ${vals.email}`
+        : `✅ ส่งคำร้องสำเร็จ (${data.docNo}) เจ้าหน้าที่จะดำเนินการโดยเร็ว`;
+      ['applicant_name','phone','email','subject','details'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('complaint_type').value='';
+      removeFile();
+      // อัปเดต stats
+      fetch(`${API_URL}?action=stats`,{redirect:'follow'}).then(r=>r.text()).then(txt=>{
+        const d=JSON.parse(txt);
+        if(d.success){document.getElementById('statTotal').textContent=d.total;document.getElementById('statPending').textContent=d.pending;document.getElementById('statDone').textContent=d.done;}
+      }).catch(()=>{});
+    } else { throw new Error(data.message||'เกิดข้อผิดพลาด'); }
+  } catch(err) { msgBox.className='msg error'; msgBox.textContent='❌ ส่งไม่สำเร็จ: '+err.message; console.error(err); }
+  finally { btn.disabled=false; btn.innerHTML='✉️ ส่งคำร้องเรียน'; }
+}
+</script>
+</body>
+</html>

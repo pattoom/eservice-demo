@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ระบบเจ้าหน้าที่ — E-Service ขอใช้น้ำประปา ทต.บ้านใหม่</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue1: #1e3a8a; --blue2: #2563eb; --blue3: #3b82f6;
+      --white: #fff; --border: #e2e8f0; --text: #1e2d3d;
+      --muted: #64748b; --green: #16a34a; --red: #dc2626; --yellow: #d97706;
+    }
+    body { font-family: 'Sarabun', sans-serif; min-height: 100vh; background: linear-gradient(145deg, #2563eb 0%, #1e3a8a 100%); padding: 24px 14px 60px; color: var(--text); }
+    .page-title { text-align: center; color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 18px; line-height: 1.5; }
+    .card { background: #fff; border-radius: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.13); padding: 22px 20px 18px; max-width: 820px; margin: 0 auto 18px; }
+    .card-title { font-size: 1rem; font-weight: 700; text-align: center; margin-bottom: 16px; }
+    #mainSection { display: none; }
+    .form-group { margin-bottom: 13px; }
+    label { display: block; font-size: .875rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .hint { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+    input[type="password"], input[type="text"], input[type="file"], select {
+      width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: 'Sarabun', sans-serif; font-size: .95rem; color: var(--text);
+      background: #fafcff; outline: none; transition: border-color .2s;
+    }
+    input[type="password"]:focus, input[type="text"]:focus, select:focus {
+      border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+    input[type="file"] { padding: 8px 12px; cursor: pointer; }
+    .pw-row { display: flex; gap: 10px; align-items: center; }
+    .pw-row input { flex: 1; }
+    .btn-show { padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 8px; background: #f8fafc; cursor: pointer; font-size: .85rem; color: var(--muted); flex-shrink: 0; }
+    /* Stats */
+    .stats-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .stat-box { flex: 1; min-width: 90px; border-radius: 12px; padding: 12px 14px; text-align: center; }
+    .stat-box .num { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .stat-box .lbl { font-size: .75rem; margin-top: 4px; opacity: .85; }
+    .stat-all     { background: #eff6ff; color: var(--blue1); }
+    .stat-pending { background: #fef3c7; color: #92400e; }
+    .stat-done    { background: #dcfce7; color: #065f46; }
+    /* Toolbar */
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
+    .toolbar .t-group { display: flex; flex-direction: column; gap: 4px; }
+    .toolbar .t-group label { font-size: .78rem; font-weight: 600; color: var(--muted); margin: 0; }
+    .toolbar input[type="text"], .toolbar select { width: auto; min-width: 110px; padding: 8px 11px; font-size: .85rem; }
+    .toolbar .btn-action { padding: 8px 13px; border: none; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: .83rem; font-weight: 600; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+    .btn-print-month { background: var(--blue1); color: #fff; }
+    .btn-export-xl   { background: #15803d; color: #fff; }
+    .btn-export-pdf  { background: #b91c1c; color: #fff; }
+    .btn-action:hover { opacity: .88; }
+    /* Filter tabs */
+    .filter-tabs { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
+    .tab { padding: 6px 13px; border-radius: 20px; font-size: .82rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: #f8fafc; color: var(--muted); transition: all .2s; }
+    .tab.active { background: var(--blue2); color: #fff; border-color: var(--blue2); }
+    /* Detail */
+    .detail-box { display: none; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 10px; padding: 13px 15px; margin-bottom: 13px; font-size: .875rem; line-height: 1.9; }
+    .detail-box.show { display: block; }
+    .detail-row { display: flex; gap: 8px; align-items: baseline; }
+    .detail-row .lbl { color: var(--muted); min-width: 130px; flex-shrink: 0; }
+    .detail-row .val { color: var(--text); font-weight: 600; word-break: break-word; }
+    .detail-row a { color: var(--blue2); }
+    .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: .78rem; font-weight: 700; }
+    .badge-pending { background: #fef3c7; color: var(--yellow); }
+    .badge-done    { background: #dcfce7; color: var(--green); }
+    .pdf-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .btn-pdf { padding: 7px 14px; border: none; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-pdf-print { background: var(--blue1); color: #fff; }
+    .divider { border: none; border-top: 1px dashed var(--border); margin: 12px 0; }
+    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-family: 'Sarabun', sans-serif; font-size: .975rem; font-weight: 700; cursor: pointer; transition: opacity .2s; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-login  { background: linear-gradient(135deg, var(--blue1), var(--blue2)); color: #fff; }
+    .btn-upload { background: linear-gradient(135deg, #c2610a, #e07b1a); color: #fff; margin-top: 4px; }
+    .btn:hover { opacity: .9; }
+    .btn-back-link { display: inline-block; padding: 9px 22px; background: var(--blue2); color: #fff; border: none; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: .9rem; font-weight: 600; text-decoration: none; margin-top: 13px; cursor: pointer; }
+    .center { text-align: center; }
+    .msg { display: none; padding: 11px 15px; border-radius: 8px; font-size: .9rem; font-weight: 600; margin-top: 11px; text-align: center; }
+    .msg.success { background: #dcfce7; color: var(--green); border: 1.5px solid #86efac; display: block; }
+    .msg.error   { background: #fee2e2; color: var(--red);   border: 1.5px solid #fca5a5; display: block; }
+    .msg.info    { background: #eff6ff; color: var(--blue2); border: 1.5px solid #93c5fd; display: block; }
+    /* Summary table */
+    .sheet-card { background: #fff; border-radius: 18px; box-shadow: 0 6px 28px rgba(0,0,0,.13); max-width: 820px; margin: 0 auto; overflow: hidden; }
+    .sheet-card-header { padding: 16px 20px 10px; }
+    .sheet-card-title { font-size: 1rem; font-weight: 700; }
+    .summary-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .summary-table th { background: var(--blue1); color: #fff; padding: 9px 11px; text-align: left; font-weight: 600; position: sticky; top: 0; }
+    .summary-table td { padding: 8px 11px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+    .summary-table tr:last-child td { border-bottom: none; }
+    .summary-table tr:hover td { background: #f0f7ff; }
+    .tbl-wrap { overflow-x: auto; }
+    /* Pagination */
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 5px; padding: 14px 16px; flex-wrap: wrap; }
+    .pg-btn { padding: 6px 13px; border: 1.5px solid var(--border); border-radius: 7px; background: #fff; cursor: pointer; font-family: 'Sarabun', sans-serif; font-size: .85rem; color: var(--muted); transition: all .15s; }
+    .pg-btn.active { background: var(--blue2); color: #fff; border-color: var(--blue2); font-weight: 700; }
+    .pg-btn:hover:not(.active) { background: #f0f7ff; border-color: var(--blue2); color: var(--blue2); }
+    .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .perpage-wrap { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: var(--muted); padding: 0 16px 12px; }
+    .perpage-wrap select { width: auto; padding: 5px 8px; font-size: .82rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 3px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 5px; }
+    /* Print */
+    @media print {
+      body { background: white !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .sheet-card { box-shadow: none !important; border: none !important; }
+      .summary-table th { background: #1e3a8a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    .print-only { display: none; }
+    .print-header { text-align: center; margin-bottom: 18px; padding: 20px 20px 0; }
+    .print-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .print-header p  { font-size: .85rem; color: #64748b; }
+  </style>
+</head>
+<body>
+
+<h1 class="page-title no-print">🔐 ระบบเจ้าหน้าที่ — E-Service ขอใช้น้ำประปา ทต.บ้านใหม่</h1>
+
+<!-- LOGIN -->
+<div class="card no-print" id="loginSection">
+  <div class="card-title">🔑 เข้าสู่ระบบเจ้าหน้าที่</div>
+  <div class="form-group">
+    <label>รหัสผ่าน</label>
+    <div class="pw-row">
+      <input type="password" id="pwInput" placeholder="กรอกรหัสผ่าน" onkeydown="if(event.key==='Enter') login()">
+      <button class="btn-show" onclick="togglePw()">👁 แสดง</button>
+    </div>
+  </div>
+  <button class="btn btn-login" id="btnLogin" onclick="login()">เข้าสู่ระบบ</button>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<!-- MAIN -->
+<div id="mainSection">
+  <div class="card no-print">
+    <div class="card-title">📤 อัปโหลดผลการดำเนินการ</div>
+    <div class="filter-tabs">
+      <div class="tab active" onclick="filterList('all',this)">📋 ทั้งหมด</div>
+      <div class="tab" onclick="filterList('pending',this)">⏳ รอดำเนินการ</div>
+      <div class="tab" onclick="filterList('done',this)">✅ ดำเนินการแล้ว</div>
+    </div>
+    <div class="form-group">
+      <label>👤 เลือกคำขอที่ต้องการดำเนินการ</label>
+      <select id="requestSelect" onchange="onSelectRequest()">
+        <option value="">— กำลังโหลด —</option>
+      </select>
+    </div>
+
+    <div class="detail-box" id="detailBox">
+      <div class="detail-row"><span class="lbl">📅 วันที่ยื่น</span>    <span class="val" id="d_date"></span></div>
+      <div class="detail-row"><span class="lbl">🔖 เลขที่เอกสาร</span> <span class="val" id="d_docNo"></span></div>
+      <div class="detail-row"><span class="lbl">👤 ชื่อ-สกุล</span>    <span class="val" id="d_name"></span></div>
+      <div class="detail-row"><span class="lbl">📞 เบอร์โทร</span>     <span class="val" id="d_phone"></span></div>
+      <div class="detail-row"><span class="lbl">✉️ อีเมล</span>        <span class="val" id="d_email"></span></div>
+      <div class="detail-row"><span class="lbl">🚿 ประเภทคำขอ</span> <span class="val" id="d_type"></span></div>
+      <div class="detail-row"><span class="lbl">📅 วันใช้บริการ</span> <span class="val" id="d_serviceDate"></span></div>
+      <div class="detail-row"><span class="lbl">📍 สถานที่</span>      <span class="val" id="d_address"></span></div>
+      <div class="detail-row"><span class="lbl">📄 รายละเอียด</span>   <span class="val" id="d_details"></span></div>
+      <div class="detail-row"><span class="lbl">📎 รูปแนบ</span>       <span class="val" id="d_attach"></span></div>
+      <div class="detail-row"><span class="lbl">🏷️ สถานะ</span>        <span class="val" id="d_status"></span></div>
+      <div class="pdf-actions">
+        <button class="btn-pdf btn-pdf-print" onclick="openPrintForm()">🖨️ พิมพ์แบบฟอร์ม</button>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="form-group">
+      <label>🖼️ ไฟล์รูปผลการดำเนินการ <span style="font-weight:400;color:var(--muted);font-size:.8rem">(JPG/PNG • ไม่เกิน 5 MB)</span></label>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
+      <p class="hint">ไม่บังคับ — อัปโหลดแล้วระบบจะส่งอีเมลแจ้งผู้ขออัตโนมัติ (ถ้ามีอีเมล)</p>
+    </div>
+    <button class="btn btn-upload" id="btnUpload" onclick="uploadResult()">📤 อัปโหลดผลและอัปเดตสถานะ</button>
+    <div class="msg" id="uploadMsg"></div>
+    <div class="center">
+      <a href="eservice-water-form.html" class="btn-back-link">← กลับหน้าฟอร์มประชาชน</a>
+    </div>
+  </div>
+
+  <!-- SUMMARY SHEET -->
+  <div class="sheet-card">
+    <div class="print-header print-only" id="printHeader">
+      <h2>รายงานสรุปผลการให้บริการ E-Service ขอใช้น้ำประปา</h2>
+      <p>เทศบาลตำบลบ้านใหม่ จังหวัดลำปาง</p>
+      <p id="printMonthLabel"></p>
+    </div>
+
+    <div class="sheet-card-header no-print">
+      <div class="sheet-card-title">📋 รายการคำขอทั้งหมด</div>
+    </div>
+
+    <div style="padding:0 16px 12px;">
+      <div class="stats-bar">
+        <div class="stat-box stat-all">
+          <div class="num" id="statTotal">0</div>
+          <div class="lbl">รับเรื่องทั้งหมด</div>
+        </div>
+        <div class="stat-box stat-done">
+          <div class="num" id="statDone">0</div>
+          <div class="lbl">ดำเนินการแล้ว</div>
+        </div>
+        <div class="stat-box stat-pending">
+          <div class="num" id="statPending">0</div>
+          <div class="lbl">รอดำเนินการ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-print" style="padding:0 16px 12px;">
+      <div class="toolbar">
+        <div class="t-group">
+          <label>🔍 ค้นหา</label>
+          <input type="text" id="searchInput" placeholder="ชื่อ / เลขที่ / ประเภท..." oninput="applyFilter()">
+        </div>
+        <div class="t-group">
+          <label>📅 เดือน</label>
+          <select id="monthFilter" onchange="applyFilter()">
+            <option value="">— ทุกเดือน —</option>
+          </select>
+        </div>
+        <div class="t-group">
+          <label>สถานะ</label>
+          <select id="statusFilter" onchange="applyFilter()">
+            <option value="">ทั้งหมด</option>
+            <option value="pending">⏳ รอดำเนินการ</option>
+            <option value="done">✅ ดำเนินการแล้ว</option>
+          </select>
+        </div>
+        <button class="btn-action btn-print-month" onclick="printMonthSummary()">🖨️ พิมพ์สรุปรายเดือน</button>
+        <button class="btn-action btn-export-xl"   onclick="exportExcel()">📊 Export Excel</button>
+        <button class="btn-action btn-export-pdf"  onclick="exportPDF()">📄 Export PDF</button>
+      </div>
+    </div>
+
+    <div class="perpage-wrap no-print">
+      <span>แสดง</span>
+      <select id="perPageSel" onchange="onPerPageChange()">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="15">15</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="0">ทั้งหมด</option>
+      </select>
+      <span>รายการ/หน้า</span>
+      <span id="pageInfo" style="color:#94a3b8;margin-left:4px;"></span>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th>วันที่ยื่น</th>
+            <th>เลขที่</th>
+            <th>ชื่อ-สกุล</th>
+            <th>ประเภทคำขอ</th>
+            <th>สถานะ</th>
+            <th class="no-print">PDF</th>
+          </tr>
+        </thead>
+        <tbody id="summaryBody">
+          <tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px">— กรุณาเข้าสู่ระบบก่อน —</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination no-print" id="paginationBar"></div>
+
+    <div class="print-only" id="printFooter" style="display:none;padding:30px 20px 0;">
+      <div style="display:flex;justify-content:space-around;margin-top:20px;font-size:.85rem;text-align:center;">
+        <div>
+          <p>ลงชื่อ .......................................ผู้รายงาน</p>
+          <p style="margin-top:4px">(.....................................)</p>
+          <p style="margin-top:2px">วันที่ ........................................</p>
+        </div>
+        <div>
+          <p>ลงชื่อ .......................................ผู้อนุมัติ</p>
+          <p style="margin-top:4px">(.....................................)</p>
+          <p style="margin-top:2px">วันที่ ........................................</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../config.js"></script>
+<script>
+const API_URL       = ESERVICE_CONFIG.apiUrl.water;
+const PRINT_FORM_PAGE = 'print.html';
+const SYSTEM_NAME   = 'ขอใช้น้ำประปา';
+
+let savedPw = '', allRows = [], filteredRows = [];
+let currentFilter = 'all', selectedRow = null;
+let currentPage = 1, perPage = 10;
+
+function fmtDate(v) {
+  if (!v) return '-';
+  const d = new Date(v);
+  if (isNaN(d)) return v;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function thaiMonth(ym) {
+  if (!ym) return ym;
+  const [y,m] = ym.split('-');
+  const M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return `${M[+m-1]} ${+y+543}`;
+}
+function rowMonth(r) { return r.date ? r.date.slice(0,7) : ''; }
+
+function togglePw() {
+  const i = document.getElementById('pwInput');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+function login() {
+  const pw  = document.getElementById('pwInput').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('btnLogin');
+  msg.className = 'msg';
+  if (!pw) { msg.className='msg error'; msg.textContent='⚠️ กรุณากรอกรหัสผ่าน'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบ...';
+  msg.className = 'msg info'; msg.textContent = '⏳ กำลังโหลดข้อมูล...';
+  fetch(API_URL, { method:'POST', body: new URLSearchParams({ action:'list', password:pw }) })
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) throw new Error(data.message || 'รหัสผ่านไม่ถูกต้อง');
+      savedPw = pw; allRows = data.rows;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('mainSection').style.display  = 'block';
+      renderDropdown('all'); buildMonthFilter(); applyFilter();
+    })
+    .catch(err => {
+      msg.className='msg error'; msg.textContent='❌ '+err.message;
+      btn.disabled=false; btn.innerHTML='เข้าสู่ระบบ';
+    });
+}
+
+function filterList(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderDropdown(filter); clearDetail();
+}
+
+function renderDropdown(filter) {
+  const sel = document.getElementById('requestSelect');
+  const filtered = allRows.filter(r => {
+    if (filter==='pending') return r.status !== 'ดำเนินการแล้ว';
+    if (filter==='done')    return r.status === 'ดำเนินการแล้ว';
+    return true;
+  });
+  sel.innerHTML = `<option value="">— เลือกคำขอ (${filtered.length} รายการ) —</option>`;
+  filtered.forEach(r => {
+    const icon = r.status==='ดำเนินการแล้ว' ? '✅' : '⏳';
+    const opt  = document.createElement('option');
+    opt.value  = r.rowNum;
+    opt.textContent = `${icon} ${r.docNo} | ${r.name} — ${r.requestType||'-'}`;
+    sel.appendChild(opt);
+  });
+}
+
+function buildMonthFilter() {
+  const months = [...new Set(allRows.map(r=>rowMonth(r)).filter(Boolean))].sort().reverse();
+  const sel = document.getElementById('monthFilter');
+  months.forEach(ym => {
+    const opt = document.createElement('option');
+    opt.value = ym; opt.textContent = thaiMonth(ym);
+    sel.appendChild(opt);
+  });
+}
+
+function applyFilter() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const month  = document.getElementById('monthFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  filteredRows = allRows.filter(r => {
+    const matchMonth  = !month  || rowMonth(r)===month;
+    const matchStatus = !status || (status==='done' ? r.status==='ดำเนินการแล้ว' : r.status!=='ดำเนินการแล้ว');
+    const hay = `${r.docNo} ${r.name} ${r.requestType||''} ${r.address||''} ${r.subject||''}`.toLowerCase();
+    return matchMonth && matchStatus && (!search || hay.includes(search));
+  });
+  const done = filteredRows.filter(r=>r.status==='ดำเนินการแล้ว').length;
+  document.getElementById('statTotal').textContent   = filteredRows.length;
+  document.getElementById('statDone').textContent    = done;
+  document.getElementById('statPending').textContent = filteredRows.length - done;
+  currentPage = 1; renderTable();
+}
+
+function onPerPageChange() { perPage = +document.getElementById('perPageSel').value; currentPage=1; renderTable(); }
+
+function renderTable() {
+  const pp    = perPage===0 ? filteredRows.length : perPage;
+  const total = filteredRows.length;
+  const pages = pp ? Math.max(1, Math.ceil(total/pp)) : 1;
+  if (currentPage>pages) currentPage=pages;
+  const start = pp ? (currentPage-1)*pp : 0;
+  const slice = pp ? filteredRows.slice(start, start+pp) : filteredRows;
+  document.getElementById('pageInfo').textContent =
+    total ? `(แสดง ${start+1}–${Math.min(start+(pp||total),total)} จาก ${total} รายการ)` : '';
+  const tbody = document.getElementById('summaryBody');
+  if (!slice.length) {
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px">— ไม่พบรายการ —</td></tr>';
+  } else {
+    tbody.innerHTML = slice.map((r,i) => {
+      const badge = r.status==='ดำเนินการแล้ว'
+        ? '<span class="status-badge badge-done">✅ ดำเนินการแล้ว</span>'
+        : '<span class="status-badge badge-pending">⏳ รอดำเนินการ</span>';
+      const pdf = r.pdfUrl ? `<a href="${r.pdfUrl}" target="_blank" style="color:#2563eb;font-size:.8rem">📄</a>` : '-';
+      return `<tr>
+        <td style="text-align:center;color:#94a3b8">${start+i+1}</td>
+        <td>${r.date||'-'}</td>
+        <td style="font-size:.8rem">${r.docNo||'-'}</td>
+        <td>${r.name||'-'}</td>
+        <td style="font-size:.82rem">${r.requestType||'-'}</td>
+        <td>${badge}</td>
+        <td class="no-print">${pdf}</td>
+      </tr>`;
+    }).join('');
+  }
+  renderPagination(pages);
+}
+
+function renderPagination(pages) {
+  const bar = document.getElementById('paginationBar');
+  if (pages<=1) { bar.innerHTML=''; return; }
+  let html = `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ ก่อน</button>`;
+  let s2=Math.max(1,currentPage-3), e2=Math.min(pages,currentPage+3);
+  if(s2>1) html+=`<button class="pg-btn" onclick="goPage(1)">1</button>${s2>2?'<span style="padding:0 4px;color:#94a3b8">…</span>':''}`;
+  for(let p=s2;p<=e2;p++) html+=`<button class="pg-btn${p===currentPage?' active':''}" onclick="goPage(${p})">${p}</button>`;
+  if(e2<pages) html+=`${e2<pages-1?'<span style="padding:0 4px;color:#94a3b8">…</span>':''}<button class="pg-btn" onclick="goPage(${pages})">${pages}</button>`;
+  html+=`<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?'disabled':''}>ถัดไป ›</button>`;
+  bar.innerHTML=html;
+}
+
+function goPage(p) {
+  const pp=perPage===0?filteredRows.length:perPage;
+  const pages=pp?Math.max(1,Math.ceil(filteredRows.length/pp)):1;
+  if(p<1||p>pages) return;
+  currentPage=p; renderTable();
+  document.querySelector('.sheet-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function onSelectRequest() {
+  const rowNum = +document.getElementById('requestSelect').value;
+  if (!rowNum) { clearDetail(); return; }
+  const r = allRows.find(x=>x.rowNum===rowNum);
+  if (!r) return;
+  selectedRow = r;
+  const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val||'-'; };
+  set('d_date',  fmtDate(r.date));
+  set('d_docNo', r.docNo);
+  set('d_name',  r.name);
+  set('d_phone', r.phone);
+  set('d_email', r.email||'-');
+  set('d_type', r.requestType);
+  set('d_serviceDate', fmtDate(r.serviceDate));
+  set('d_address', r.address);
+  set('d_details', r.details);
+  document.getElementById('d_attach').innerHTML = r.attachUrl
+    ? `<a href="${r.attachUrl}" target="_blank">📎 ดูรูปแนบ</a>` : '-';
+  document.getElementById('d_status').innerHTML = r.status==='ดำเนินการแล้ว'
+    ? '<span class="status-badge badge-done">✅ ดำเนินการแล้ว</span>'
+    : '<span class="status-badge badge-pending">⏳ รอดำเนินการ</span>';
+  document.getElementById('detailBox').classList.add('show');
+  document.getElementById('uploadMsg').className='msg';
+}
+
+function clearDetail() {
+  selectedRow=null;
+  document.getElementById('detailBox').classList.remove('show');
+  document.getElementById('uploadMsg').className='msg';
+}
+
+function openPrintForm() {
+  if (!selectedRow) return;
+  const r = selectedRow;
+  sessionStorage.setItem('printData', JSON.stringify({ date:r.date, docNo:r.docNo, name:r.name, phone:r.phone, email:r.email, requestType:r.requestType, serviceDate:r.serviceDate, address:r.address, details:r.details, attachUrl:r.attachUrl, pdfUrl:r.pdfUrl }));
+  window.open(PRINT_FORM_PAGE,'_blank');
+}
+
+async function uploadResult() {
+  const btn    = document.getElementById('btnUpload');
+  const msgBox = document.getElementById('uploadMsg');
+  msgBox.className='msg';
+  const rowNum = document.getElementById('requestSelect').value;
+  const file   = document.getElementById('fileInput').files[0];
+  if (!rowNum) { msgBox.className='msg error'; msgBox.textContent='⚠️ กรุณาเลือกคำขอก่อน'; return; }
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>กำลังอัปโหลด...';
+  try {
+    let fileData='', fileName='', mimeType='';
+    if (file) {
+      const b64 = await toBase64(file);
+      fileData=b64.split(',')[1]; fileName=file.name; mimeType=file.type||'image/jpeg';
+    }
+    const res  = await fetch(API_URL, { method:'POST', body: new URLSearchParams({ action: 'uploadResultImage', password: savedPw, row: rowNum, file: fileData, filename: fileName, mimeType }) });
+    const data = await res.json();
+    if (data.success) {
+      const email = selectedRow&&selectedRow.email;
+      msgBox.className='msg success';
+      msgBox.textContent = email ? `✅ อัปโหลดเรียบร้อย! ส่งอีเมลแจ้ง ${email} แล้ว` : '✅ อัปโหลดเรียบร้อย!';
+      const row = allRows.find(x=>x.rowNum===+rowNum);
+      if (row) { row.status='ดำเนินการแล้ว'; row.resultUrl=data.resultUrl||''; }
+      renderDropdown(currentFilter); applyFilter();
+      document.getElementById('fileInput').value='';
+      document.getElementById('requestSelect').value=rowNum; onSelectRequest();
+    } else throw new Error(data.message||'เกิดข้อผิดพลาด');
+  } catch(err) {
+    msgBox.className='msg error'; msgBox.textContent='❌ '+err.message;
+  } finally {
+    btn.disabled=false; btn.innerHTML='📤 อัปโหลดผลและอัปเดตสถานะ';
+  }
+}
+
+function toBase64(file) {
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result); r.onerror=()=>rej(new Error('อ่านไฟล์ไม่ได้'));
+    r.readAsDataURL(file);
+  });
+}
+
+function printMonthSummary() {
+  const month = document.getElementById('monthFilter').value;
+  const label = month ? thaiMonth(month) : 'ทุกเดือน';
+  document.getElementById('printMonthLabel').textContent =
+    `ประจำเดือน ${label} — พิมพ์วันที่ ${new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}`;
+  const done=filteredRows.filter(r=>r.status==='ดำเนินการแล้ว').length;
+  const pending=filteredRows.length-done;
+  let sl=document.getElementById('printStatsLine');
+  if(!sl){ sl=document.createElement('p'); sl.id='printStatsLine'; document.getElementById('printHeader').appendChild(sl); }
+  sl.textContent=`รับเรื่องมา ${filteredRows.length} ราย  •  ดำเนินการแล้ว ${done} ราย  •  รอดำเนินการ ${pending} ราย`;
+  sl.style.cssText='margin-top:6px;font-weight:700;font-size:.95rem;';
+  const sv=currentPage, sp=perPage; perPage=0; renderTable();
+  document.getElementById('printFooter').style.display='flex';
+  window.print();
+  perPage=sp; currentPage=sv; renderTable();
+  document.getElementById('printFooter').style.display='none';
+}
+
+function exportExcel() {
+  const month=document.getElementById('monthFilter').value;
+  const label=month?thaiMonth(month):'ทั้งหมด';
+  const done=filteredRows.filter(r=>r.status==='ดำเนินการแล้ว').length;
+  const rows=[
+    [`รายงาน E-Service ${SYSTEM_NAME} — ทต.บ้านใหม่ จ.ลำปาง`],
+    [`ประจำ: ${label}`],
+    [`รับเรื่องทั้งหมด: ${filteredRows.length} ราย  |  ดำเนินการแล้ว: ${done} ราย  |  รอดำเนินการ: ${filteredRows.length-done} ราย`],
+    [],
+    ['#', 'วันที่ยื่น', 'เลขที่เอกสาร', 'ชื่อ-สกุล', 'เบอร์โทร', 'อีเมล', 'ประเภทคำขอ', 'วันใช้บริการ', 'สถานที่', 'รายละเอียด', 'สถานะ', 'PDF'],
+    ...filteredRows.map((r,i)=>[i+1, r.date||'-', r.docNo||'-', r.name||'-', r.phone||'-', r.email||'-', r.requestType||'-', r.serviceDate||'-', r.address||'-', r.details||'-', r.status||'-', r.pdfUrl||'-'])
+  ];
+  const csv='﻿'+rows.map(row=>row.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const link=document.createElement('a');
+  link.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  link.download=`eservice-${SYSTEM_NAME}-${month||'all'}.csv`;
+  link.click();
+}
+
+function exportPDF() { printMonthSummary(); }
+</script>
+</body>
+</html>

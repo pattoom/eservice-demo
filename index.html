@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ระบบ E-Service ออนไลน์</title>
+  <script src="config.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+      background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #1565c0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 48px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 40px;
+    }
+    .header img {
+      width: 88px;
+      height: 88px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      padding: 6px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.3;
+      text-shadow: 0 2px 6px rgba(0,0,0,.4);
+    }
+    .header p {
+      font-size: 1rem;
+      opacity: .85;
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: .85rem;
+      margin-top: 10px;
+      letter-spacing: .5px;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,.2);
+      transition: transform .18s, box-shadow .18s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.3);
+    }
+    .card-top {
+      padding: 28px 24px 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .card-icon {
+      font-size: 2.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-info h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a237e;
+      margin-bottom: 4px;
+    }
+    .card-info p {
+      font-size: .82rem;
+      color: #666;
+      line-height: 1.5;
+    }
+    .card-footer {
+      margin-top: auto;
+      padding: 14px 24px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-footer span { opacity: .9; }
+    .card-footer .arrow { font-size: 1.1rem; }
+
+    /* Color themes */
+    .c-lift   .card-icon { background: #e3f2fd; }
+    .c-repair .card-icon { background: #fff3e0; }
+    .c-water  .card-icon { background: #e0f7fa; }
+    .c-esg    .card-icon { background: #e8f5e9; }
+    .c-esc    .card-icon { background: #fce4ec; }
+
+    .c-lift   .card-footer { background: #1565c0; }
+    .c-repair .card-footer { background: #e65100; }
+    .c-water  .card-footer { background: #006064; }
+    .c-esg    .card-footer { background: #2e7d32; }
+    .c-esc    .card-footer { background: #880e4f; }
+
+    /* Footer */
+    .page-footer {
+      color: rgba(255,255,255,.6);
+      font-size: .78rem;
+      margin-top: 40px;
+      text-align: center;
+    }
+    .page-footer a { color: rgba(255,255,255,.8); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <img id="orgLogoEl" src="" alt="โลโก้หน่วยงาน" onerror="this.style.display='none'">
+  <h1 id="orgNameEl">ระบบ E-Service ออนไลน์</h1>
+  <p id="orgAddrEl"></p>
+  <div class="badge">🌐 บริการออนไลน์ 24 ชั่วโมง</div>
+</div>
+
+<div class="grid">
+
+  <a class="card c-lift" href="lift/form.html">
+    <div class="card-top">
+      <div class="card-icon">🚒</div>
+      <div class="card-info">
+        <h2>ขอรับบริการรถกระเช้าไฟฟ้า</h2>
+        <p>ยื่นคำขอใช้รถกระเช้า สำหรับงานซ่อมแซมสายไฟ ตัดแต่งต้นไม้ หรืองานสูง</p>
+      </div>
+    </div>
+    <div class="card-footer"><span>ยื่นแบบคำขอ</span><span class="arrow">→</span></div>
+  </a>
+
+  <a class="card c-repair" href="repair/form.html">
+    <div class="card-top">
+      <div class="card-icon">🔧</div>
+      <div class="card-info">
+        <h2>แจ้งซ่อมถนน / ไฟฟ้า</h2>
+        <p>แจ้งปัญหาถนนชำรุด ไฟฟ้าสาธารณะดับ หรือสิ่งปลูกสร้างชำรุดในพื้นที่</p>
+      </div>
+    </div>
+    <div class="card-footer"><span>แจ้งซ่อม</span><span class="arrow">→</span></div>
+  </a>
+
+  <a class="card c-water" href="water/form.html">
+    <div class="card-top">
+      <div class="card-icon">💧</div>
+      <div class="card-info">
+        <h2>ขอน้ำเพื่ออุปโภคบริโภค</h2>
+        <p>ขอรถน้ำ หรือขอเชื่อมต่อระบบประปา สำหรับครัวเรือนและชุมชน</p>
+      </div>
+    </div>
+    <div class="card-footer"><span>ยื่นคำขอ</span><span class="arrow">→</span></div>
+  </a>
+
+  <a class="card c-esg" href="esg/form.html">
+    <div class="card-top">
+      <div class="card-icon">♻️</div>
+      <div class="card-info">
+        <h2>ขยะ / สิ่งแวดล้อม</h2>
+        <p>แจ้งปัญหาขยะ น้ำเสีย สิ่งแวดล้อม หรือขอให้เก็บขยะพิเศษในพื้นที่</p>
+      </div>
+    </div>
+    <div class="card-footer"><span>แจ้งปัญหา</span><span class="arrow">→</span></div>
+  </a>
+
+  <a class="card c-esc" href="esc/form.html">
+    <div class="card-top">
+      <div class="card-icon">📢</div>
+      <div class="card-info">
+        <h2>ร้องเรียน / ร้องทุกข์</h2>
+        <p>ยื่นเรื่องร้องเรียนทั่วไป ข้อเสนอแนะ หรือแจ้งปัญหาต่อเจ้าหน้าที่โดยตรง</p>
+      </div>
+    </div>
+    <div class="card-footer"><span>ยื่นเรื่อง</span><span class="arrow">→</span></div>
+  </a>
+
+</div>
+
+<div class="page-footer">
+  <p id="footerText"></p>
+  <p style="margin-top:6px">
+    <a id="websiteLink" href="#" target="_blank">🏠 กลับเว็บไซต์หน่วยงาน</a>
+  </p>
+</div>
+
+<script>
+  // ดึงค่าจาก config.js แล้วใส่ใน DOM
+  const cfg = ESERVICE_CONFIG;
+  document.getElementById('orgLogoEl').src    = cfg.orgLogo  || '';
+  document.getElementById('orgNameEl').textContent = 'ระบบ E-Service ออนไลน์ ' + (cfg.orgShort || cfg.orgName || '');
+  document.getElementById('orgAddrEl').textContent = cfg.orgPhone ? '📞 โทร. ' + cfg.orgPhone : '';
+  document.getElementById('footerText').textContent = cfg.orgName + ' © ' + new Date().getFullYear();
+  const link = document.getElementById('websiteLink');
+  if (cfg.orgWebsite) { link.href = cfg.orgWebsite; }
+  else { link.closest('p').style.display = 'none'; }
+</script>
+</body>
+</html>

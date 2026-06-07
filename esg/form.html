@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E-Service ขยะ/สิ่งแวดล้อม • ทต.บ้านใหม่</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --g1:#064e3b; --g2:#10b981; --g3:#6ee7b7;
+      --white:#fff; --text:#1e2d3d; --muted:#64748b;
+      --border:#d1d5db; --green:#16a34a; --red:#dc2626; --yellow:#d97706;
+    }
+    html, body { min-height:100vh; font-family:'Sarabun',sans-serif; color:var(--text); }
+    body {
+      background:linear-gradient(to bottom,rgba(6,78,59,.42) 0%,rgba(16,185,129,.32) 50%,rgba(6,78,59,.42) 100%),
+        url('/images/banmaibg.jpg') center/cover fixed no-repeat;
+      background-color:var(--g1); padding-bottom:72px;
+    }
+    header { background:linear-gradient(135deg,var(--g1) 0%,var(--g2) 55%,var(--g3) 100%); box-shadow:0 3px 16px rgba(0,0,0,.35); padding:14px 20px; position:sticky; top:0; z-index:200; }
+    .header-inner { max-width:700px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+    header img { width:62px; height:62px; border-radius:50%; border:3px solid #fff; object-fit:cover; flex-shrink:0; }
+    .header-text h1 { color:#fff; font-size:1.05rem; font-weight:700; line-height:1.4; }
+    .header-text p  { color:rgba(255,255,255,.85); font-size:.75rem; margin-top:2px; }
+    .container { max-width:700px; margin:24px auto 0; padding:0 16px; }
+
+    .stats-box { background:rgba(255,255,255,.88); backdrop-filter:blur(8px); border:1px solid rgba(16,185,129,.25); border-radius:12px; padding:12px 18px; margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap; }
+    .stat-item { flex:1; min-width:130px; display:flex; align-items:center; gap:6px; font-size:.85rem; font-weight:600; }
+    .stat-item .num { font-weight:700; font-size:1rem; }
+    .stat-item.pending .num { color:var(--yellow); }
+    .stat-item.done    .num { color:var(--green); }
+    .stat-item.total   .num { color:var(--g1); }
+
+    .info-card { background:rgba(255,255,255,.95); border-radius:16px 16px 0 0; padding:16px 22px 12px; border-bottom:1px solid #e5e7eb; text-align:center; }
+    .info-card h2 { font-size:1rem; font-weight:700; color:var(--g1); margin-bottom:4px; }
+    .info-card p  { font-size:.78rem; color:var(--muted); line-height:1.7; }
+    .form-card { background:rgba(255,255,255,.97); border-radius:0 0 16px 16px; padding:20px 22px 24px; box-shadow:0 8px 32px rgba(0,0,0,.22); }
+
+    .form-group { margin-bottom:14px; }
+    .form-row { display:flex; gap:12px; }
+    .form-row .form-group { flex:1; }
+    label { display:block; font-size:.875rem; font-weight:600; color:#374151; margin-bottom:5px; }
+    label .req { color:var(--red); margin-left:2px; }
+    label .opt { color:var(--muted); font-weight:400; font-size:.78rem; margin-left:4px; }
+    input[type="text"],input[type="date"],input[type="tel"],input[type="email"],select,textarea {
+      width:100%; padding:10px 12px; border:1.5px solid var(--border); border-radius:8px;
+      font-family:'Sarabun',sans-serif; font-size:.93rem; color:var(--text);
+      background:#fafcff; transition:border-color .2s,box-shadow .2s; outline:none;
+    }
+    input:focus,select:focus,textarea:focus { border-color:var(--g2); box-shadow:0 0 0 3px rgba(16,185,129,.18); background:#fff; }
+    textarea { resize:vertical; min-height:90px; }
+
+    .file-drop { border:2px dashed var(--border); border-radius:8px; padding:16px; text-align:center; cursor:pointer; background:#fafcff; transition:border-color .2s,background .2s; }
+    .file-drop:hover { border-color:var(--g2); background:#ecfdf5; }
+    .file-drop .icon { font-size:1.8rem; margin-bottom:4px; }
+    .file-drop .label-text { font-size:.85rem; color:var(--muted); }
+    .file-drop .label-text strong { color:var(--g1); }
+    .file-drop .file-limit { font-size:.75rem; color:#94a3b8; margin-top:3px; }
+    .file-preview { display:none; align-items:center; gap:10px; background:#ecfdf5; border:1.5px solid var(--g3); border-radius:8px; padding:10px 14px; margin-top:8px; }
+    .file-preview.show { display:flex; }
+    .file-preview img { width:48px; height:48px; object-fit:cover; border-radius:6px; }
+    .file-preview .file-info { flex:1; font-size:.82rem; }
+    .file-preview .file-name { font-weight:600; word-break:break-all; }
+    .file-preview .file-size { color:var(--muted); }
+    .file-preview .btn-remove { background:none; border:none; color:var(--red); font-size:1.1rem; cursor:pointer; padding:4px; }
+    .file-error { font-size:.78rem; color:var(--red); margin-top:4px; font-weight:600; }
+
+    .btn-submit { width:100%; padding:13px; background:linear-gradient(135deg,var(--g1),var(--g2)); color:#fff; border:none; border-radius:10px; font-family:'Sarabun',sans-serif; font-size:1rem; font-weight:700; cursor:pointer; transition:opacity .2s; margin-top:6px; }
+    .btn-submit:hover { opacity:.9; }
+    .btn-submit:disabled { opacity:.55; cursor:not-allowed; }
+    .btn-staff { display:block; width:100%; padding:12px; background:linear-gradient(135deg,#1e3a8a,#2563eb); color:#fff; border:none; border-radius:10px; font-family:'Sarabun',sans-serif; font-size:.93rem; font-weight:700; text-align:center; text-decoration:none; margin-top:10px; }
+
+    .msg { display:none; padding:12px 16px; border-radius:8px; font-size:.88rem; font-weight:600; margin-top:12px; text-align:center; }
+    .msg.success { background:#dcfce7; color:var(--green); border:1.5px solid #86efac; display:block; }
+    .msg.error   { background:#fee2e2; color:var(--red);   border:1.5px solid #fca5a5; display:block; }
+    .pdpa-note { background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; font-size:.78rem; color:#14532d; margin-top:14px; line-height:1.7; }
+    .credit { text-align:center; font-size:.72rem; color:rgba(255,255,255,.65); padding:14px 0 4px; }
+    .fixed-footer { position:fixed; bottom:0; left:0; right:0; z-index:200; background:linear-gradient(135deg,var(--g1),var(--g2)); padding:11px 16px; text-align:center; box-shadow:0 -2px 12px rgba(0,0,0,.3); }
+    .fixed-footer a { color:#d1fae5; font-size:.84rem; font-weight:600; text-decoration:none; }
+
+    .list-card { background:rgba(255,255,255,.95); border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.18); margin-top:18px; overflow:hidden; }
+    .list-card-title { background:linear-gradient(135deg,var(--g1),var(--g2)); color:#fff; padding:14px 20px; font-size:1rem; font-weight:700; }
+    .tbl-wrap { max-height:420px; overflow-y:auto; }
+    .req-table { width:100%; border-collapse:collapse; font-size:.87rem; }
+    .req-table th { background:var(--g1); color:#fff; padding:10px 12px; text-align:left; font-weight:600; position:sticky; top:0; z-index:1; }
+    .req-table td { padding:9px 12px; border-bottom:1px solid #e5e7eb; vertical-align:middle; }
+    .req-table tr:last-child td { border-bottom:none; }
+    .req-table tr:hover td { background:#f0fdf4; }
+    .req-table .num { text-align:center; width:40px; color:#94a3b8; font-size:.8rem; }
+    .badge-pending { display:inline-block; background:#fef3c7; color:#92400e; padding:2px 10px; border-radius:20px; font-size:.78rem; font-weight:700; }
+    .badge-done    { display:inline-block; background:#dcfce7; color:#065f46; padding:2px 10px; border-radius:20px; font-size:.78rem; font-weight:700; }
+    .badge-recv    { display:inline-block; background:#d1fae5; color:#064e3b; padding:2px 10px; border-radius:20px; font-size:.78rem; font-weight:700; }
+    .tbl-loading   { text-align:center; color:#94a3b8; padding:24px; font-size:.9rem; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { display:inline-block; width:15px; height:15px; border:3px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:5px; }
+    @media (max-width:480px) { .form-row { flex-direction:column; gap:0; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <img src="/LogoBM.png" alt="โลโก้" onerror="this.style.display='none'">
+    <div class="header-text">
+      <h1>E-Service ขยะ/สิ่งแวดล้อม</h1>
+      <p>เทศบาลตำบลบ้านใหม่ อ.วังเหนือ จ.ลำปาง • โทร. 0-5427-9006</p>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-box">
+    <div class="stat-item total">  📋 ทั้งหมด: <span class="num" id="statTotal">…</span> ราย</div>
+    <div class="stat-item pending">⏳ รอดำเนินการ: <span class="num" id="statPending">…</span> ราย</div>
+    <div class="stat-item done">  ✅ ดำเนินการแล้ว: <span class="num" id="statDone">…</span> ราย</div>
+  </div>
+
+  <div class="info-card">
+    <h2>♻️ แบบคำร้องเรื่องขยะ/สิ่งแวดล้อม</h2>
+    <p>เทศบาลตำบลบ้านใหม่ เลขที่ 999 หมู่ที่ 6 ต.วังเหนือ อ.วังเหนือ จ.ลำปาง 52140<br>
+    โทร. 0-5427-9006 &nbsp;|&nbsp; อีเมล: <a href="mailto:saraban@banmailocal.go.th">saraban@banmailocal.go.th</a></p>
+  </div>
+
+  <div class="form-card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>📅 วันที่ยื่น <span class="req">*</span></label>
+        <input type="date" id="submit_datetime" required>
+      </div>
+      <div class="form-group">
+        <label>📅 วันที่ต้องการให้ตรวจสอบ</label>
+        <input type="date" id="service_date">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>👤 ชื่อ–สกุล ผู้แจ้ง <span class="req">*</span></label>
+        <input type="text" id="applicant_name" placeholder="ชื่อ-นามสกุล" required>
+      </div>
+      <div class="form-group">
+        <label>📞 เบอร์ติดต่อ <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="0812345678" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>✉️ อีเมล <span class="opt">(รับแจ้งผลอัตโนมัติ)</span></label>
+      <input type="email" id="email" placeholder="example@gmail.com">
+    </div>
+
+    <div class="form-group">
+      <label>♻️ ประเภทปัญหา <span class="req">*</span></label>
+      <select id="request_type" required>
+        <option value="">-- เลือก --</option>
+        <option>ขยะตกค้าง/ไม่ได้เก็บ</option>
+        <option>ขอรับถังขยะ</option>
+        <option>จุดทิ้งขยะไม่ถูกสุขลักษณะ</option>
+        <option>กลิ่นเหม็น/เหตุรำคาญ</option>
+        <option>น้ำเสีย/น้ำเน่า</option>
+        <option>ซากสัตว์/สัตว์ตาย</option>
+        <option>กิ่งไม้/เศษวัสดุกีดขวาง</option>
+        <option>ร้องเรียนปัญหาสิ่งแวดล้อม</option>
+        <option>อื่นๆ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>📍 สถานที่เกิดปัญหา <span class="req">*</span></label>
+      <input type="text" id="location" placeholder="บ้านเลขที่ หมู่บ้าน จุดสังเกต" required>
+    </div>
+
+    <div class="form-group">
+      <label>📝 รายละเอียดเพิ่มเติม</label>
+      <textarea id="details" placeholder="เช่น ช่วงเวลา กลิ่น สภาพปัญหา จุดสังเกต..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>📷 รูปประกอบปัญหา <span class="opt">(JPG/PNG/WEBP • ไม่เกิน 5 MB)</span></label>
+      <div class="file-drop" id="fileDrop" onclick="document.getElementById('attachInput').click()">
+        <input type="file" id="attachInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleFile(this)">
+        <div class="icon">📷</div>
+        <div class="label-text"><strong>คลิกเพื่อเลือกรูป</strong> หรือลากวางที่นี่</div>
+        <div class="file-limit">JPG, PNG, WEBP • ขนาดสูงสุด 5 MB</div>
+      </div>
+      <div class="file-error" id="fileError"></div>
+      <div class="file-preview" id="filePreview">
+        <img id="previewImg" src="" alt="">
+        <div class="file-info">
+          <div class="file-name" id="previewName"></div>
+          <div class="file-size" id="previewSize"></div>
+        </div>
+        <button class="btn-remove" onclick="removeFile()">✕</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btnSubmit" onclick="submitForm()">✉️ ส่งคำร้อง</button>
+    <div class="msg" id="msgBox"></div>
+
+    <div class="pdpa-note">
+      🔒 <strong>ข้อมูลส่วนบุคคลของท่านจะถูกเก็บเป็นความลับตาม พ.ร.บ. PDPA</strong><br>
+      หากระบุอีเมลไว้ ท่านจะได้รับแจ้งผลการดำเนินการทางอีเมลอัตโนมัติ
+    </div>
+
+    <a href="eservice-esg-staff.html" class="btn-staff">🔐 สำหรับเจ้าหน้าที่ → อัปโหลดผลและดูคำร้อง</a>
+  </div>
+
+  <div class="list-card">
+    <div class="list-card-title">📋 รายการคำร้องขยะ/สิ่งแวดล้อมทั้งหมด</div>
+    <div class="tbl-wrap">
+      <table class="req-table">
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>วันที่ยื่น</th>
+            <th>ชื่อผู้แจ้ง</th>
+            <th>ประเภทปัญหา</th>
+            <th>สถานที่</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody id="reqTableBody">
+          <tr><td colspan="6" class="tbl-loading">⏳ กำลังโหลด...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="credit">พัฒนาโดย เทศบาลตำบลบ้านใหม่ © 2568</p>
+</div>
+
+<div class="fixed-footer">
+  <a href="https://www.banmailocal.go.th/">🏠 กลับหน้าหลักเว็บไซต์ ทต.บ้านใหม่</a>
+</div>
+
+<script src="../config.js"></script>
+<script>
+const API_URL  = ESERVICE_CONFIG.apiUrl.esg;
+const MAX_SIZE = 5 * 1024 * 1024;
+let attachB64 = '', attachName = '', attachMime = '';
+
+(function() {
+  const t   = new Date();
+  const ymd = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  document.getElementById('submit_datetime').value = ymd;
+})();
+
+fetch(`${API_URL}?action=stats`, { redirect:'follow' })
+  .then(r => r.text()).then(txt => {
+    const d = JSON.parse(txt);
+    if (d.success) {
+      document.getElementById('statTotal').textContent   = d.total;
+      document.getElementById('statPending').textContent = d.pending;
+      document.getElementById('statDone').textContent    = d.done;
+    }
+  }).catch(() => ['statTotal','statPending','statDone'].forEach(id =>
+    document.getElementById(id).textContent = '-'));
+
+const drop = document.getElementById('fileDrop');
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.style.borderColor='#10b981'; });
+drop.addEventListener('dragleave', () => drop.style.borderColor='');
+drop.addEventListener('drop', e => { e.preventDefault(); drop.style.borderColor=''; if(e.dataTransfer.files[0]) handleFile(null,e.dataTransfer.files[0]); });
+
+function handleFile(input, file) {
+  file = file || input.files[0];
+  const errEl = document.getElementById('fileError');
+  errEl.textContent = '';
+  if (!file) return;
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) { errEl.textContent='⚠️ รองรับเฉพาะ JPG, PNG, WEBP'; return; }
+  if (file.size > MAX_SIZE) { errEl.textContent='⚠️ ไฟล์ใหญ่เกิน 5 MB'; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    attachB64=e.target.result.split(',')[1]; attachName=file.name; attachMime=file.type;
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('previewName').textContent = file.name;
+    document.getElementById('previewSize').textContent = `${(file.size/1024).toFixed(0)} KB`;
+    document.getElementById('filePreview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFile() {
+  attachB64=''; attachName=''; attachMime='';
+  document.getElementById('attachInput').value='';
+  document.getElementById('filePreview').classList.remove('show');
+}
+
+async function loadTable() {
+  const tbody = document.getElementById('reqTableBody');
+  try {
+    const rows = JSON.parse(await (await fetch(`${API_URL}?action=getRequestsESG&ts=${Date.now()}`,{redirect:'follow'})).text());
+    if (!rows||!rows.length) { tbody.innerHTML='<tr><td colspan="6" class="tbl-loading">ยังไม่มีรายการ</td></tr>'; return; }
+    const fmtDate = v => { if(!v) return '-'; const s=String(v); if(s.match(/^\d{4}-\d{2}-\d{2}/)) return s.slice(0,10); const d=new Date(s); return isNaN(d)?s.slice(0,10)||'-':`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+    tbody.innerHTML = rows.map((r,i) => {
+      const status = String(r[10]||'รอดำเนินการ');
+      const badge  = status==='ดำเนินการแล้ว'?`<span class="badge-done">✅ ดำเนินการแล้ว</span>`
+                   : status==='รับเรื่องแล้ว'?`<span class="badge-recv">📋 รับเรื่องแล้ว</span>`
+                   :`<span class="badge-pending">⏳ รอดำเนินการ</span>`;
+      return `<tr><td class="num">${i+1}</td><td>${fmtDate(r[0])}</td><td>${r[2]||'-'}</td><td>${r[5]||'-'}</td><td>${r[6]||'-'}</td><td>${badge}</td></tr>`;
+    }).join('');
+  } catch(e) { tbody.innerHTML='<tr><td colspan="6" class="tbl-loading">โหลดไม่สำเร็จ</td></tr>'; }
+}
+loadTable();
+
+async function submitForm() {
+  const btn=document.getElementById('btnSubmit'), msgBox=document.getElementById('msgBox');
+  msgBox.className='msg'; msgBox.textContent='';
+  const vals = {
+    submit_datetime: document.getElementById('submit_datetime').value,
+    service_date:    document.getElementById('service_date').value,
+    applicant_name:  document.getElementById('applicant_name').value.trim(),
+    phone:           document.getElementById('phone').value.trim(),
+    email:           document.getElementById('email').value.trim(),
+    request_type:    document.getElementById('request_type').value,
+    location:        document.getElementById('location').value.trim(),
+    details:         document.getElementById('details').value.trim(),
+  };
+  if (!vals.applicant_name||!vals.phone||!vals.request_type||!vals.location) {
+    msgBox.className='msg error'; msgBox.textContent='⚠️ กรุณากรอกข้อมูลให้ครบทุกช่องที่มี *'; return;
+  }
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>กำลังส่ง...';
+  try {
+    const body=new URLSearchParams({action:'submitESG',...vals});
+    if(attachB64){body.append('attachBase64',attachB64);body.append('attachFilename',attachName);body.append('attachMime',attachMime);}
+    const data=JSON.parse(await (await fetch(API_URL,{method:'POST',body})).text());
+    if(data.success){
+      msgBox.className='msg success';
+      msgBox.textContent=vals.email?`✅ ส่งคำร้องสำเร็จ (${data.docNo}) ระบบจะแจ้งผลไปที่ ${vals.email}`:`✅ ส่งคำร้องสำเร็จ (${data.docNo}) เจ้าหน้าที่จะดำเนินการโดยเร็ว`;
+      ['applicant_name','phone','email','location','details'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('request_type').value='';
+      removeFile(); loadTable();
+      setTimeout(()=>location.reload(),4000);
+    } else { throw new Error(data.message||'เกิดข้อผิดพลาด'); }
+  } catch(err) { msgBox.className='msg error'; msgBox.textContent='❌ ส่งไม่สำเร็จ: '+err.message; console.error(err); }
+  finally { btn.disabled=false; btn.innerHTML='✉️ ส่งคำร้อง'; }
+}
+</script>
+</body>
+</html>
