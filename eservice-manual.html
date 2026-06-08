@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คู่มือการใช้งาน E-Service สำหรับประชาชน | เทศบาลตำบลบ้านใหม่</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+  :root {
+    --bg:#f8fafc; --card:#ffffff; --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --c1:#0ea5e9; --c2:#1e40af; --c3:#0f766e; --c4:#059669; --c5:#7c3aed;
+    --active:var(--c1); --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.7;min-height:100vh}
+
+  .topbar{background:linear-gradient(135deg,#1e40af 0%,#2563eb 100%);color:#fff;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:70px;position:sticky;top:0;z-index:100}
+  .topbar-brand{display:flex;align-items:center;gap:14px}
+  .topbar-logo{font-size:24px}
+  .topbar-title{font-weight:700;font-size:1.1rem}
+  .topbar-sub{font-size:.85rem;opacity:.8}
+  .topbar-contact{font-size:.9rem;text-align:right}
+
+  .tab-nav{background:#fff;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 24px;position:sticky;top:70px;z-index:90}
+  .tab-btn{background:none;border:none;cursor:pointer;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:500;color:var(--muted);padding:18px 20px;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s}
+  .tab-btn:hover{color:var(--text)}
+  .tab-btn.active{color:var(--active);border-bottom-color:var(--active);font-weight:600}
+  .tab-btn[data-sys="1"].active{--active:var(--c1)}
+  .tab-btn[data-sys="2"].active{--active:var(--c2)}
+  .tab-btn[data-sys="3"].active{--active:var(--c3)}
+  .tab-btn[data-sys="4"].active{--active:var(--c4)}
+  .tab-btn[data-sys="5"].active{--active:var(--c5)}
+
+  .layout{max-width:900px;margin:0 auto;padding:40px 24px}
+  .panel{display:none;animation:fadeIn .3s ease}
+  .panel.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  .hero{border-radius:var(--radius);padding:36px 40px;margin-bottom:30px;color:#fff;display:flex;gap:24px;align-items:center}
+  .hero-icon{font-size:3.5rem;background:rgba(255,255,255,.2);width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .hero-title{font-size:1.45rem;font-weight:700;margin-bottom:6px}
+  .hero-desc{font-size:1rem;opacity:.9;line-height:1.5}
+  .sys1 .hero{background:linear-gradient(135deg,var(--c1),#0284c7)}
+  .sys2 .hero{background:linear-gradient(135deg,var(--c2),#3b82f6)}
+  .sys3 .hero{background:linear-gradient(135deg,var(--c3),#14b8a6)}
+  .sys4 .hero{background:linear-gradient(135deg,var(--c4),#10b981)}
+  .sys5 .hero{background:linear-gradient(135deg,var(--c5),#a78bfa)}
+
+  .section-card{background:var(--card);border-radius:var(--radius);padding:32px 36px;margin-bottom:24px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.03)}
+  .section-title{font-size:1.25rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;color:var(--active);border-bottom:2px solid var(--border);padding-bottom:12px}
+
+  .step-list{list-style:none;counter-reset:step}
+  .step-list li{counter-increment:step;display:flex;gap:16px;padding:16px 0;border-bottom:1px dashed var(--border);font-size:1.05rem}
+  .step-list li:last-child{border-bottom:none}
+  .step-list li::before{content:counter(step);min-width:32px;height:32px;border-radius:50%;background:var(--active);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
+
+  /* กล่องข้อมูลเพิ่มเติม */
+  .info-box{border-radius:12px;padding:16px 20px;margin-top:20px;font-size:.95rem;line-height:1.8}
+  .info-box.email{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+  .info-box.status{background:#f0fdf4;border:1px solid #bbf7d0;color:#065f46}
+  .info-box.privacy{background:#faf5ff;border:1px solid #e9d5ff;color:#581c87}
+  .info-box .title{font-weight:700;margin-bottom:6px;font-size:1rem}
+  .info-box ul{margin-left:18px}
+
+  .manual-img{width:100%;max-width:700px;border-radius:12px;margin:15px 0;border:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);display:block}
+  .img-caption{font-size:.9rem;color:var(--muted);text-align:center;margin-bottom:20px}
+
+  .sys1{--active:var(--c1)} .sys2{--active:var(--c2)} .sys3{--active:var(--c3)} .sys4{--active:var(--c4)} .sys5{--active:var(--c5)}
+
+  @media(max-width:768px){
+    .topbar{flex-direction:column;height:auto;padding:16px;text-align:center;gap:10px}
+    .layout{padding:20px 16px}
+    .hero{flex-direction:column;text-align:center;padding:24px}
+    .section-card{padding:20px}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">🏛️</div>
+    <div>
+      <div class="topbar-title">คู่มือการใช้งาน E-Service สำหรับประชาชน</div>
+      <div class="topbar-sub">เทศบาลตำบลบ้านใหม่ อำเภอวังเหนือ จังหวัดลำปาง</div>
+    </div>
+  </div>
+  <div class="topbar-contact">📞 0-5427-9006</div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-sys="1" onclick="switchTab(1)">💧 ขอน้ำเพื่อการอุปโภคบริโภค</button>
+  <button class="tab-btn" data-sys="2" onclick="switchTab(2)">🚒 ขอรับบริการรถกระเช้าไฟฟ้า</button>
+  <button class="tab-btn" data-sys="3" onclick="switchTab(3)">🔧 แจ้งซ่อมถนน/ไฟฟ้าสาธารณะ</button>
+  <button class="tab-btn" data-sys="4" onclick="switchTab(4)">♻️ คำร้องเรื่องขยะ/สิ่งแวดล้อม</button>
+  <button class="tab-btn" data-sys="5" onclick="switchTab(5)">📋 รับเรื่องร้องเรียนทั่วไป</button>
+</nav>
+
+<div class="layout">
+
+  <!-- ===== 1. ขอน้ำ ===== -->
+  <div class="panel active sys1" id="panel1">
+    <div class="hero">
+      <div class="hero-icon">💧</div>
+      <div>
+        <div class="hero-title">E-Service แบบคำร้องขอน้ำเพื่อการอุปโภคบริโภค</div>
+        <div class="hero-desc">บริการรถบรรทุกน้ำช่วยเหลือประชาชนที่ประสบภัยแล้ง ขาดแคลนน้ำ หรือขอใช้น้ำในงานประเพณีต่างๆ</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📌 ขั้นตอนการใช้งาน</div>
+      <ol class="step-list">
+        <li>เข้าสู่หน้า <strong>E-Service ขอน้ำเพื่อการอุปโภคบริโภค</strong> ในเว็บไซต์เทศบาล</li>
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรศัพท์ที่ติดต่อได้สะดวก</li>
+        <li>เลือกประเภทการใช้น้ำ เช่น ใช้น้ำในชุมชน งานศพ งานบุญ/พิธีกรรม</li>
+        <li>ระบุวันที่ต้องการใช้บริการ และสถานที่จุดลงน้ำให้ชัดเจน</li>
+        <li>หากมีอีเมล ให้กรอกไว้เพื่อรับแจ้งผล — <strong>ระบุหรือไม่ก็ได้</strong></li>
+        <li>แนบรูปถ่ายสถานที่หรือถังน้ำสำรอง (ถ้ามี) เพื่อช่วยให้เจ้าหน้าที่ประเมินได้ดีขึ้น</li>
+        <li>กดปุ่ม <strong>"ส่งคำขอ"</strong> ระบบจะบันทึกคำขอและแจ้งเจ้าหน้าที่ทันที</li>
+      </ol>
+
+      <div class="info-box email">
+        <div class="title">📧 หากระบุอีเมลไว้ ท่านจะได้รับ:</div>
+        <ul>
+          <li>อีเมลยืนยันพร้อม <strong>เลขที่เอกสาร</strong> และ <strong>PDF แบบคำร้อง</strong> ทันทีที่ส่ง</li>
+          <li>อีเมลแจ้งผล เมื่อเจ้าหน้าที่ดำเนินการเสร็จสิ้นแล้ว</li>
+        </ul>
+      </div>
+
+      <div class="info-box status">
+        <div class="title">📋 ติดตามสถานะได้จากหน้าเว็บ:</div>
+        ตารางรายการด้านล่างฟอร์มจะแสดงชื่อ วันที่ และสถานะ
+        <ul>
+          <li>⏳ <strong>รอดำเนินการ</strong> — เจ้าหน้าที่รับเรื่องแล้ว อยู่ระหว่างจัดคิว</li>
+          <li>📋 <strong>รับเรื่องแล้ว</strong> — มีเจ้าหน้าที่รับผิดชอบแล้ว</li>
+          <li>✅ <strong>ดำเนินการแล้ว</strong> — เสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <img src="e-service/User/01-Screenshot 2026-05-03 152717.png" class="manual-img" alt="หน้าจอระบบขอน้ำ">
+      <div class="img-caption">ภาพแสดงการกรอกแบบฟอร์มขอน้ำออนไลน์</div>
+    </div>
+  </div>
+
+  <!-- ===== 2. รถกระเช้า ===== -->
+  <div class="panel sys2" id="panel2">
+    <div class="hero">
+      <div class="hero-icon">🚒</div>
+      <div>
+        <div class="hero-title">E-Service แบบขอรับบริการรถกระเช้าไฟฟ้า</div>
+        <div class="hero-desc">ยื่นคำร้องออนไลน์เพื่อขอรับบริการรถกระเช้าของเทศบาล สะดวก รวดเร็ว ไม่ต้องเดินทางมาที่สำนักงาน</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📌 ขั้นตอนการใช้งาน</div>
+      <ol class="step-list">
+        <li>เข้าสู่หน้า <strong>E-Service ขอรับบริการรถกระเช้าไฟฟ้า</strong> ในเว็บไซต์เทศบาล</li>
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรศัพท์ที่ติดต่อได้สะดวก</li>
+        <li>เลือกวัตถุประสงค์การใช้งาน เช่น งานศพ ซ่อมแซมบ้าน งานบุญ</li>
+        <li>ระบุวันที่ต้องการใช้บริการ และสถานที่ให้ชัดเจน</li>
+        <li>หากมีอีเมล ให้กรอกไว้เพื่อรับแจ้งผล — <strong>ระบุหรือไม่ก็ได้</strong></li>
+        <li>แนบรูปถ่ายสถานที่ปฏิบัติงาน (ถ้ามี) เพื่อให้เจ้าหน้าที่ประเมินหน้างานได้ล่วงหน้า</li>
+        <li>กดปุ่ม <strong>"ส่งคำร้อง"</strong> ระบบจะบันทึกและแจ้งเจ้าหน้าที่ทันที</li>
+      </ol>
+
+      <div class="info-box email">
+        <div class="title">📧 หากระบุอีเมลไว้ ท่านจะได้รับ:</div>
+        <ul>
+          <li>อีเมลยืนยันพร้อม <strong>เลขที่เอกสาร</strong> และ <strong>PDF แบบคำร้อง</strong> ทันทีที่ส่ง</li>
+          <li>อีเมลแจ้งผล พร้อมรูปผลการดำเนินงาน เมื่อเสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <div class="info-box status">
+        <div class="title">📋 ติดตามสถานะได้จากหน้าเว็บ:</div>
+        ตารางรายการด้านล่างฟอร์มจะแสดงชื่อ วันที่ และสถานะ
+        <ul>
+          <li>⏳ <strong>รอดำเนินการ</strong> — รับเรื่องแล้ว อยู่ระหว่างจัดคิว</li>
+          <li>📋 <strong>รับเรื่องแล้ว</strong> — มีเจ้าหน้าที่รับผิดชอบแล้ว</li>
+          <li>✅ <strong>ดำเนินการแล้ว</strong> — เสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <img src="e-service/User/02-Screenshot 2026-05-03 152808.png" class="manual-img" alt="หน้าจอระบบรถกระเช้า">
+      <div class="img-caption">ภาพแสดงหน้าจอการกรอกข้อมูลขอรับบริการรถกระเช้า</div>
+    </div>
+  </div>
+
+  <!-- ===== 3. แจ้งซ่อม ===== -->
+  <div class="panel sys3" id="panel3">
+    <div class="hero">
+      <div class="hero-icon">🔧</div>
+      <div>
+        <div class="hero-title">E-Service แบบคำร้องแจ้งซ่อมถนน/ไฟฟ้าสาธารณะ</div>
+        <div class="hero-desc">พบเห็นถนนชำรุด เป็นหลุมเป็นบ่อ หรือไฟฟ้าส่องสว่างสาธารณะดับ แจ้งเทศบาลได้ทันที</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📌 ขั้นตอนการใช้งาน</div>
+      <ol class="step-list">
+        <li>เข้าสู่หน้า <strong>E-Service แจ้งซ่อมถนน/ไฟฟ้าสาธารณะ</strong> ในเว็บไซต์เทศบาล</li>
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรศัพท์ที่ติดต่อได้สะดวก</li>
+        <li>เลือกประเภทงาน เช่น แจ้งซ่อมถนน แจ้งซ่อมไฟฟ้า หรือทั้งสองอย่าง</li>
+        <li>เลือกลักษณะปัญหา เช่น ถนนชำรุด ไฟฟ้าดับ โคมไฟเสีย สายไฟอันตราย</li>
+        <li>ระบุสถานที่/จุดเกิดเหตุให้ละเอียด เช่น ชื่อหมู่บ้าน ซอย หรือเลขเสาไฟ</li>
+        <li>หากมีอีเมล ให้กรอกไว้เพื่อรับแจ้งผล — <strong>ระบุหรือไม่ก็ได้</strong></li>
+        <li>แนบรูปถ่ายจุดชำรุด เพื่อให้ช่างประเมินหน้างานได้โดยไม่ต้องนัดตรวจก่อน</li>
+        <li>กดปุ่ม <strong>"ส่งคำร้อง"</strong> ข้อมูลจะถูกส่งตรงถึงกองช่างทันที</li>
+      </ol>
+
+      <div class="info-box email">
+        <div class="title">📧 หากระบุอีเมลไว้ ท่านจะได้รับ:</div>
+        <ul>
+          <li>อีเมลยืนยันพร้อม <strong>เลขที่เอกสาร</strong> และ <strong>PDF แบบคำร้อง</strong> ทันทีที่ส่ง</li>
+          <li>อีเมลแจ้งผล พร้อมรูปผลการซ่อมแซม เมื่อเสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <div class="info-box status">
+        <div class="title">📋 ติดตามสถานะได้จากหน้าเว็บ:</div>
+        ตารางรายการด้านล่างฟอร์มจะแสดงชื่อ ประเภทงาน และสถานะ
+        <ul>
+          <li>⏳ <strong>รอดำเนินการ</strong> — รับเรื่องแล้ว อยู่ระหว่างจัดคิวซ่อม</li>
+          <li>📋 <strong>รับเรื่องแล้ว</strong> — กองช่างรับผิดชอบแล้ว</li>
+          <li>✅ <strong>ดำเนินการแล้ว</strong> — ซ่อมแซมเสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <img src="e-service/User/03-Screenshot 2026-05-03 152840.png" class="manual-img" alt="หน้าจอระบบแจ้งซ่อม">
+      <div class="img-caption">ภาพแสดงขั้นตอนการแจ้งซ่อมถนนและไฟฟ้า</div>
+    </div>
+  </div>
+
+  <!-- ===== 4. ขยะ/สิ่งแวดล้อม ===== -->
+  <div class="panel sys4" id="panel4">
+    <div class="hero">
+      <div class="hero-icon">♻️</div>
+      <div>
+        <div class="hero-title">E-Service แบบฟอร์มคำร้องเรื่องขยะ/สิ่งแวดล้อม</div>
+        <div class="hero-desc">แจ้งปัญหาขยะตกค้าง กลิ่นเหม็นรบกวน น้ำเสีย หรือปัญหาสิ่งแวดล้อมอื่นๆ ในชุมชน</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📌 ขั้นตอนการใช้งาน</div>
+      <ol class="step-list">
+        <li>เข้าสู่หน้า <strong>E-Service คำร้องเรื่องขยะ/สิ่งแวดล้อม</strong> ในเว็บไซต์เทศบาล</li>
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรศัพท์ที่ติดต่อได้สะดวก</li>
+        <li>เลือกประเภทปัญหา เช่น ขยะตกค้าง กลิ่นเหม็น น้ำเสีย ซากสัตว์ กิ่งไม้กีดขวาง</li>
+        <li>ระบุสถานที่เกิดปัญหาให้ชัดเจน</li>
+        <li>หากมีอีเมล ให้กรอกไว้เพื่อรับแจ้งผล — <strong>ระบุหรือไม่ก็ได้</strong></li>
+        <li>แนบรูปถ่ายบริเวณที่มีปัญหา เพื่อให้เจ้าหน้าที่มีข้อมูลเบื้องต้น</li>
+        <li>กดปุ่ม <strong>"ส่งคำร้อง"</strong> ข้อมูลจะส่งตรงถึงกองสาธารณสุขและสิ่งแวดล้อม</li>
+      </ol>
+
+      <div class="info-box email">
+        <div class="title">📧 หากระบุอีเมลไว้ ท่านจะได้รับ:</div>
+        <ul>
+          <li>อีเมลยืนยันพร้อม <strong>เลขที่เอกสาร</strong> และ <strong>PDF แบบคำร้อง</strong> ทันทีที่ส่ง</li>
+          <li>อีเมลแจ้งผล พร้อมรูปผลการดำเนินงาน เมื่อเสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <div class="info-box status">
+        <div class="title">📋 ติดตามสถานะได้จากหน้าเว็บ:</div>
+        ตารางรายการด้านล่างฟอร์มจะแสดงชื่อ ประเภทปัญหา และสถานะ
+        <ul>
+          <li>⏳ <strong>รอดำเนินการ</strong> — รับเรื่องแล้ว อยู่ระหว่างจัดการ</li>
+          <li>📋 <strong>รับเรื่องแล้ว</strong> — มีเจ้าหน้าที่รับผิดชอบแล้ว</li>
+          <li>✅ <strong>ดำเนินการแล้ว</strong> — เสร็จสิ้น</li>
+        </ul>
+      </div>
+
+      <img src="e-service/User/04-Screenshot 2026-05-03 152903.png" class="manual-img" alt="หน้าจอระบบขยะ">
+      <div class="img-caption">ภาพแสดงการกรอกแบบฟอร์มเรื่องขยะและสิ่งแวดล้อม</div>
+    </div>
+  </div>
+
+  <!-- ===== 5. ร้องเรียน ===== -->
+  <div class="panel sys5" id="panel5">
+    <div class="hero">
+      <div class="hero-icon">📋</div>
+      <div>
+        <div class="hero-title">E-Service แบบฟอร์มรับเรื่องร้องเรียนทั่วไป</div>
+        <div class="hero-desc">ช่องทางสำหรับประชาชนในการเสนอแนะ ติชม หรือร้องเรียนการให้บริการของเทศบาล</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📌 ขั้นตอนการใช้งาน</div>
+      <ol class="step-list">
+        <li>เข้าสู่หน้า <strong>E-Service รับเรื่องร้องเรียนทั่วไป</strong> ในเว็บไซต์เทศบาล</li>
+        <li>กรอกชื่อ-นามสกุล และเบอร์โทรศัพท์ที่ติดต่อได้ (ข้อมูลของท่านจะถูกเก็บเป็นความลับ)</li>
+        <li>เลือกประเภทเรื่อง เช่น การบริการ สาธารณูปโภค การจัดการพื้นที่</li>
+        <li>พิมพ์หัวเรื่องและรายละเอียดให้ชัดเจนและครบถ้วน</li>
+        <li>หากมีอีเมล ให้กรอกไว้เพื่อรับแจ้งผล — <strong>ระบุหรือไม่ก็ได้</strong></li>
+        <li>แนบรูปภาพประกอบ (ถ้ามี) เพื่อให้เจ้าหน้าที่ตรวจสอบข้อมูลได้ชัดเจนขึ้น</li>
+        <li>กดปุ่ม <strong>"ส่งคำร้องเรียน"</strong> เจ้าหน้าที่จะพิจารณาและดำเนินการโดยเร็ว</li>
+      </ol>
+
+      <div class="info-box email">
+        <div class="title">📧 หากระบุอีเมลไว้ ท่านจะได้รับ:</div>
+        <ul>
+          <li>อีเมลยืนยันพร้อม <strong>เลขที่คำร้อง</strong> ทันทีที่ส่ง เพื่อใช้อ้างอิง</li>
+          <li>อีเมลแจ้งผล เมื่อเจ้าหน้าที่ดำเนินการเสร็จสิ้นแล้ว</li>
+        </ul>
+      </div>
+
+      <div class="info-box privacy">
+        <div class="title">🔒 การคุ้มครองความเป็นส่วนตัว:</div>
+        <ul>
+          <li>รายการคำร้องเรียนของท่าน <strong>จะไม่แสดงต่อสาธารณะ</strong> ทุกกรณี</li>
+          <li>หน้าเว็บจะแสดงเฉพาะ <strong>สถิติรวม</strong> (จำนวนทั้งหมด / รอดำเนินการ / เสร็จสิ้น) เท่านั้น</li>
+          <li>รายละเอียดคำร้องเข้าถึงได้เฉพาะ <strong>เจ้าหน้าที่ที่มีรหัสผ่าน</strong> เท่านั้น</li>
+          <li>ข้อมูลส่วนบุคคลจัดเก็บตาม <strong>พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)</strong></li>
+        </ul>
+      </div>
+
+      <img src="e-service/User/05-Screenshot 2026-05-03 152946.png" class="manual-img" alt="หน้าจอระบบร้องเรียน">
+      <div class="img-caption">ภาพแสดงการกรอกแบบฟอร์มรับเรื่องร้องเรียน</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(n) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel' + n).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.tab-btn[data-sys="${n}"]`).classList.add('active');
+  const colors = {1:'#0ea5e9',2:'#1e40af',3:'#0f766e',4:'#059669',5:'#7c3aed'};
+  document.documentElement.style.setProperty('--active', colors[n]);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
