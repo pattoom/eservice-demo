@@ -10,7 +10,7 @@ const ESERVICE_CONFIG = {
   orgName:    'กาดนัดเมืองเถินดอทคอม',
   orgShort:   'เดโม',
   orgAddress: 'เลขที่ 115 หมู่ที่ 3 ต.ล้อมแรด อ.เถิน จ.ลำปาง 52160',
-  orgPhone:   '0-5427-9006',
+  orgPhone:   '086-1902513, 085-7081347',
   orgLogo:    'https://www.thoenmarket.com/images/Logo18112561-0001.gif',
   orgWebsite: 'https://www.thoenmarket.com/index.php',
 
